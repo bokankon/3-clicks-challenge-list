@@ -1,0 +1,287 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b0f15" />
+  <title>GD List</title>
+  <link rel="preconnect" href="https://www.youtube.com" />
+  <link rel="preconnect" href="https://i.ytimg.com" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <header class="topbar">
+      <nav class="primary-nav" aria-label="Primary navigation">
+        <button class="nav-link active" data-view="list">List</button>
+        <button class="nav-link" data-view="leaderboard">Leaderboard</button>
+        <button class="nav-link" data-view="enjoyability">Enjoyability</button>
+      </nav>
+      <div id="adminStatus" class="admin-status hidden">Admin mode</div>
+    </header>
+
+    <main class="layout">
+      <aside class="sidebar">
+        <div class="sidebar-header">
+          <div class="sidebar-title">Levels</div>
+        </div>
+
+        <label class="search-box">
+          <input id="levelSearch" type="search" placeholder="Search levels" autocomplete="off" />
+        </label>
+
+        <div id="levelList" class="level-list"></div>
+
+        <div class="sidebar-footer">
+          <div id="adminTools" class="admin-tools hidden">
+            <button id="addLevelButton" class="button button-primary full-width" type="button">Add level</button>
+            <button id="manageOrderButton" class="button button-secondary full-width" type="button">Manage order</button>
+            <button id="logoutButton" class="text-button" type="button">Sign out</button>
+          </div>
+        </div>
+      </aside>
+
+      <section class="content">
+        <section id="listView" class="view active-view">
+          <article id="levelPage" class="level-page">
+            <div class="level-background" aria-hidden="true"></div>
+            <div class="level-background-overlay" aria-hidden="true"></div>
+
+            <div class="level-content">
+              <div class="level-header-grid">
+                <section class="level-heading">
+                  <div id="levelPosition" class="level-position">#1</div>
+                  <h1 id="levelName">Shitty Andromeda</h1>
+
+                  <dl class="level-meta">
+                    <div>
+                      <dt>Creators</dt>
+                      <dd id="levelCreators"></dd>
+                    </div>
+                    <div>
+                      <dt>Verifier</dt>
+                      <dd id="levelVerifier"></dd>
+                    </div>
+                    <div>
+                      <dt>Publisher</dt>
+                      <dd id="levelPublisher"></dd>
+                    </div>
+                  </dl>
+                </section>
+
+                <aside class="victors-panel">
+                  <div class="panel-heading">
+                    <h2>Victors</h2>
+                    <span id="victorCount" class="muted-count">0</span>
+                  </div>
+                  <div id="victorList" class="victor-list"></div>
+                  <button id="addVictorButton" class="button button-secondary full-width admin-only hidden" type="button">Add victor</button>
+                </aside>
+              </div>
+
+              <section class="verification-section">
+                <div class="video-shell">
+                  <iframe
+                    id="verificationFrame"
+                    class="video-frame"
+                    src=""
+                    title="Verification video"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                    referrerpolicy="strict-origin-when-cross-origin"
+                    allowfullscreen>
+                  </iframe>
+                  <div id="videoFallback" class="video-fallback hidden">No verification video</div>
+                </div>
+
+                <div class="stats-bar">
+                  <div class="stat">
+                    <span>Points</span>
+                    <strong id="levelPoints">0</strong>
+                  </div>
+                  <div class="stat">
+                    <span>Level ID</span>
+                    <strong id="levelId">N/A</strong>
+                  </div>
+                  <div class="stat">
+                    <span>Enjoyability</span>
+                    <strong id="levelEnjoyability">0.0</strong>
+                  </div>
+                  <div class="stat">
+                    <span>LDM ID</span>
+                    <strong id="levelLdmId">N/A</strong>
+                  </div>
+                </div>
+
+                <div class="level-admin-actions admin-only hidden">
+                  <button id="editLevelButton" class="button button-secondary" type="button">Edit level</button>
+                  <button id="deleteLevelButton" class="button button-danger" type="button">Delete level</button>
+                </div>
+              </section>
+            </div>
+          </article>
+        </section>
+
+        <section id="leaderboardView" class="view">
+          <div class="page-container">
+            <header class="page-header">
+              <div>
+                <h1>Leaderboard</h1>
+              </div>
+              <p>Points are calculated automatically from each level’s list position.</p>
+            </header>
+            <div id="leaderboardTable" class="data-table"></div>
+          </div>
+        </section>
+
+        <section id="enjoyabilityView" class="view">
+          <div class="page-container">
+            <header class="page-header">
+              <div>
+                <h1>Enjoyability</h1>
+              </div>
+              <p>Levels ranked by their enjoyability score.</p>
+            </header>
+            <div id="enjoyabilityTable" class="data-table"></div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+
+  <div id="loginModal" class="modal hidden" aria-hidden="true">
+    <button class="modal-backdrop" data-close-modal="loginModal" aria-label="Close"></button>
+    <div class="modal-card modal-small">
+      <div class="modal-header">
+        <div>
+          <h2>Admin sign in</h2>
+        </div>
+        <button class="icon-button" data-close-modal="loginModal" type="button" aria-label="Close">×</button>
+      </div>
+
+      <form id="loginForm" class="form-stack">
+        <label class="field">
+          <span>Username</span>
+          <input id="adminUsername" type="text" required autocomplete="username" placeholder="admin" autocapitalize="none" spellcheck="false" />
+        </label>
+        <label class="field">
+          <span>Password</span>
+          <input id="adminPassword" type="password" required autocomplete="current-password" />
+        </label>
+        <p id="loginError" class="form-error hidden">Incorrect username or password.</p>
+        <button class="button button-primary full-width" type="submit">Sign in</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="levelModal" class="modal hidden" aria-hidden="true">
+    <button class="modal-backdrop" data-close-modal="levelModal" aria-label="Close"></button>
+    <div class="modal-card">
+      <div class="modal-header">
+        <div>
+          <h2 id="levelModalTitle">Add level</h2>
+        </div>
+        <button class="icon-button" data-close-modal="levelModal" type="button" aria-label="Close">×</button>
+      </div>
+
+      <form id="levelForm" class="form-grid">
+        <input id="editingLevelId" type="hidden" />
+
+        <label class="field span-2">
+          <span>Level name</span>
+          <input id="formLevelName" required />
+        </label>
+
+        <label class="field span-2">
+          <span>Creators</span>
+          <input id="formCreators" required placeholder="Creator 1, Creator 2" />
+        </label>
+
+        <label class="field">
+          <span>Publisher</span>
+          <input id="formPublisher" required />
+        </label>
+
+        <label class="field">
+          <span>Verifier</span>
+          <input id="formVerifier" required />
+        </label>
+
+        <label class="field span-2">
+          <span>Verification YouTube URL</span>
+          <input id="formVideo" type="url" placeholder="https://www.youtube.com/watch?v=..." />
+        </label>
+
+        <label class="field">
+          <span>Enjoyability</span>
+          <input id="formEnjoyability" type="number" min="0" max="10" step="0.1" required />
+        </label>
+
+        <label class="field">
+          <span>Level ID</span>
+          <input id="formGdId" />
+        </label>
+
+        <label class="field">
+          <span>LDM ID</span>
+          <input id="formLdmId" />
+        </label>
+
+        <label class="field span-2">
+          <span>List position</span>
+          <input id="formPosition" type="number" min="1" required />
+          <small>1 is the top of the list. Points update automatically. #1 = 200, #42 = 89.59.</small>
+        </label>
+
+        <div class="modal-actions span-2">
+          <button class="button button-secondary" data-close-modal="levelModal" type="button">Cancel</button>
+          <button class="button button-primary" type="submit">Save level</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <div id="victorModal" class="modal hidden" aria-hidden="true">
+    <button class="modal-backdrop" data-close-modal="victorModal" aria-label="Close"></button>
+    <div class="modal-card modal-small">
+      <div class="modal-header">
+        <div>
+          <h2>Add victor</h2>
+        </div>
+        <button class="icon-button" data-close-modal="victorModal" type="button" aria-label="Close">×</button>
+      </div>
+
+      <form id="victorForm" class="form-stack">
+        <label class="field">
+          <span>Player name</span>
+          <input id="victorName" required />
+        </label>
+        <label class="field">
+          <span>YouTube video</span>
+          <input id="victorVideo" type="url" required placeholder="https://www.youtube.com/watch?v=..." />
+        </label>
+        <button class="button button-primary full-width" type="submit">Add victor</button>
+      </form>
+    </div>
+  </div>
+
+  <div id="orderModal" class="modal hidden" aria-hidden="true">
+    <button class="modal-backdrop" data-close-modal="orderModal" aria-label="Close"></button>
+    <div class="modal-card modal-order">
+      <div class="modal-header">
+        <div>
+          <h2>Manage list order</h2>
+        </div>
+        <button class="icon-button" data-close-modal="orderModal" type="button" aria-label="Close">×</button>
+      </div>
+      <div id="orderList" class="order-list"></div>
+      <p class="modal-note">Use the arrows to move levels. Changes are saved immediately.</p>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden" role="status"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-config.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
